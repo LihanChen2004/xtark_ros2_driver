@@ -174,8 +174,8 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options):Node("xtark_robot_no
     this->declare_parameter<std::string>("base_frame", "base_footprint");
     this->declare_parameter<std::string>("imu_frame", "imu_link");
 
-    this->declare_parameter<std::string>("robot_port", "/dev/ttyACM0");
-    std::string serial_port_ = this->get_parameter("robot_port").as_string();
+    // this->declare_parameter<std::string>("robot_port", "/dev/ttyACM0");
+    // std::string serial_port_ = this->get_parameter("robot_port").as_string();
 
     // 话题消息初始化
     this->declare_parameter<std::string>("odom_topic", "odom");
@@ -373,9 +373,9 @@ bool XtarkRobot::openSerialPort()
         return false;
     }
 
-    //开打串口
+    //打开串口
     serial_ptr_ = serial_ptr(new boost::asio::serial_port(io_service_));
-    serial_ptr_->open(serial_port_,err_code_);
+    serial_ptr_->open(serial_port_, err_code_);
 
     //串口是否正常打开
     if(err_code_)

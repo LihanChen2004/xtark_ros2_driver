@@ -181,7 +181,7 @@ class XtarkRobot : public rclcpp::Node
         void calculateImuQuaternion(struct imu_data imu_cel);
 
         //串口指针
-        std::string     serial_port_;      
+        std::string     serial_port_ = "/dev/ttyACM0";      
         int             serial_port_baud_;
         boost::shared_ptr<boost::asio::serial_port>  serial_ptr_;
         boost::system::error_code err_code_;
