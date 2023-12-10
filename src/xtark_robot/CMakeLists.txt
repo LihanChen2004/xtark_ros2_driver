@@ -26,6 +26,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS thread)
 ament_auto_find_build_dependencies()
 
 ###########
@@ -38,6 +39,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 
 target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
+    Boost::thread
 ) 
 
 rclcpp_components_register_node(${PROJECT_NAME}
