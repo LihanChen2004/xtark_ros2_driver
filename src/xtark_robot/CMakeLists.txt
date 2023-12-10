@@ -25,6 +25,7 @@ find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
 ament_auto_find_build_dependencies()
 
 ###########
@@ -34,6 +35,10 @@ ament_auto_find_build_dependencies()
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/xtark_robot.cpp
 )
+
+target_link_libraries(${PROJECT_NAME}
+    ${Boost_LIBRARIES}
+) 
 
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN XtarkRobot
