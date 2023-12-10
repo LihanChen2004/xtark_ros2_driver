@@ -174,11 +174,30 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options):Node("xtark_robot_no
     this->declare_parameter<std::string>("base_frame", "base_footprint");
     this->declare_parameter<std::string>("imu_frame", "imu_link");
 
+    this->declare_parameter<std::string>("robot_port", "/dev/ttyACM0");
+    std::string serial_port_ = this->get_parameter("robot_port").as_string();
+
     // 话题消息初始化
     this->declare_parameter<std::string>("odom_topic", "odom");
     this->declare_parameter<std::string>("imu_topic", "imu");
     this->declare_parameter<std::string>("battery_topic", "bat_vol");
     this->declare_parameter<std::string>("cmd_vel_topic", "cmd_vel");
+
+    //     //frame初始化
+//     private_nh_.param<std::string>("odom_frame", odom_frame_, "odom"); 
+    //     private_nh_.param<std::string>("base_frame", base_frame_, "base_footprint");
+    //     private_nh_.param<std::string>("imu_frame", imu_frame_, "imu_link");
+
+    //     //话题消息初始化
+    //     private_nh_.param<std::string>("odom_topic", odom_topic_, "odom"); 
+    //     private_nh_.param<std::string>("imu_topic", imu_topic_, "imu");
+    //     private_nh_.param<std::string>("battery_topic", bat_topic_, "bat_vol");
+    //     private_nh_.param<std::string>("cmd_vel_topic", cmd_vel_topic_, "cmd_vel");
+
+    //     //参数初始化
+    //     private_nh_.param<std::string>("robot_port", serial_port_, "/dev/ttyTHS1");
+    //     private_nh_.param<int>        ("robot_port_baud", serial_port_baud_, 115200);
+    //     private_nh_.param<bool>       ("pub_odom_tf", pub_odom_tf_, true);
 
     //参数初始化
     this->get_parameter("robot_port", serial_port_);
