@@ -249,7 +249,8 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options):Node("xtark_robot_no
         {
             // 启动串口接收线程
             std::thread recvSerial_thread(&XtarkRobot::recvCallback, this);
-            recvSerial_thread.join();
+            // recvSerial_thread.join();
+            RCLCPP_INFO(this->get_logger(),"Successfully launched recvSerial_thread.")
         }
         catch(...)
         {
