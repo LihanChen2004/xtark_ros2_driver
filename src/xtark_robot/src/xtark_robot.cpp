@@ -183,22 +183,6 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options):Node("xtark_robot_no
     this->declare_parameter<std::string>("battery_topic", "bat_vol");
     this->declare_parameter<std::string>("cmd_vel_topic", "cmd_vel");
 
-    //     //frame初始化
-//     private_nh_.param<std::string>("odom_frame", odom_frame_, "odom"); 
-    //     private_nh_.param<std::string>("base_frame", base_frame_, "base_footprint");
-    //     private_nh_.param<std::string>("imu_frame", imu_frame_, "imu_link");
-
-    //     //话题消息初始化
-    //     private_nh_.param<std::string>("odom_topic", odom_topic_, "odom"); 
-    //     private_nh_.param<std::string>("imu_topic", imu_topic_, "imu");
-    //     private_nh_.param<std::string>("battery_topic", bat_topic_, "bat_vol");
-    //     private_nh_.param<std::string>("cmd_vel_topic", cmd_vel_topic_, "cmd_vel");
-
-    //     //参数初始化
-    //     private_nh_.param<std::string>("robot_port", serial_port_, "/dev/ttyTHS1");
-    //     private_nh_.param<int>        ("robot_port_baud", serial_port_baud_, 115200);
-    //     private_nh_.param<bool>       ("pub_odom_tf", pub_odom_tf_, true);
-
     //参数初始化
     this->get_parameter("robot_port", serial_port_);
     this->get_parameter("robot_port_baud", serial_port_baud_);
@@ -214,18 +198,10 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options):Node("xtark_robot_no
     this->get_parameter("rgb_g", RGB_G_);
     this->get_parameter("rgb_b", RGB_B_);
 
-    // 实例化发布者对象
-    // auto odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>(odom_topic_, 50);
-    // auto imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>(imu_topic_, 50);
-    // auto bat_pub_ = this->create_publisher<std_msgs::msg::Float32>(bat_topic_, 10);
+
     odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("/odom", rclcpp::SensorDataQoS());
     imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>("/imu", rclcpp::SensorDataQoS());
     bat_pub_ = this->create_publisher<std_msgs::msg::Float32>("/bat", rclcpp::SensorDataQoS());
-
-
-    // 实例化订阅者对象
-    // cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(cmd_vel_topic_, 100, std::bind(&XtarkRobot::cmdVelCallback, this, std::placeholders::_1));
-    // light_sub_ = this->create_subscription<std_msgs::msg::ColorRGBA>("light", 10, std::bind(&XtarkRobot::light_callback, this, std::placeholders::_1));
 
     cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
     "/cmd_vel", 100,
@@ -247,8 +223,8 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options):Node("xtark_robot_no
     {
         try
         {
-            // 启动串口接收线程
-            std::thread recvSerial_thread(&XtarkRobot::recvCallback, this);
+            //启动串口接收线程
+            boost::thread recvSerial_thread(boost::bind(&XtarkRobot::recvCallback,this));
             // recvSerial_thread.join();
             RCLCPP_INFO(this->get_logger(),"Successfully launched recvSerial_thread.");
         }
