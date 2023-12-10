@@ -182,7 +182,7 @@ class XtarkRobot : public rclcpp::Node
 
         //串口指针
         std::string     serial_port_ = "/dev/ttyACM0";      
-        int             serial_port_baud_;
+        int             serial_port_baud_ = 115200;
         boost::shared_ptr<boost::asio::serial_port>  serial_ptr_;
         boost::system::error_code err_code_;
         boost::asio::io_service io_service_;
