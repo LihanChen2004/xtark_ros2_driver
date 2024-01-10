@@ -3,12 +3,10 @@ build/
 install/
 log/
 
+.cache/
+
 .vscode/
 __pycache__/
 .catkin_workspace
 *.gv
 *.pdf
-
-mat_pre.txt
-mat_out.txt
-328.txt
