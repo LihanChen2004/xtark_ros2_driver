@@ -24,33 +24,15 @@
 #include <string>
 
 //Boost库文件
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_ros/transform_broadcaster.h>
+
 #include <boost/asio.hpp>
 #include <boost/asio/serial_port.hpp>
 #include <boost/bind.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/thread.hpp>
-
-//ROS相关头文件
-// ROS1
-// #include <ros/ros.h>
-// #include <tf2/LinearMath/Quaternion.h>
-// #include <tf2_ros/transform_broadcaster.h>
-// #include <nav_msgs/Odometry.h>
-// #include <std_msgs/Int32.h>
-// #include <std_msgs/Int16.h>
-// #include <std_msgs/UInt16.h>
-// #include <std_msgs/Float32.h>
-// #include <sensor_msgs/Range.h>
-// #include <sensor_msgs/Imu.h>
-// #include <geometry_msgs/Twist.h>
-// #include <geometry_msgs/TransformStamped.h>
-// #include <std_msgs/ColorRGBA.h>
-
-// ROS2
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2_ros/transform_broadcaster.h>
-
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -62,9 +44,6 @@
 #include <std_msgs/msg/int16.hpp>
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/u_int16.hpp>
-
-// #include <dynamic_reconfigure/server.h> //???
-// #include <xtark_robot/robotConfig.h> //???
 
 #define PI 3.1415926
 
@@ -132,10 +111,8 @@ struct PoseData
 class XtarkRobot : public rclcpp::Node
 {
 public:
-  // XtarkRobot(const rclcpp::NodeOptions& options); //构造函数
   explicit XtarkRobot(const rclcpp::NodeOptions & options);  //构造函数
-  // ~XtarkRobot();  //析构函数
-  ~XtarkRobot() override;  //析构函数
+  ~XtarkRobot() override;                                    //析构函数
 
 private:
   //串口操作
@@ -149,24 +126,12 @@ private:
   void recvCallback();
   void recvDataHandle(uint8_t * buffer_data);
 
-  //ROS1
-  //速度消息回调函数
-  // void cmdVelCallback(const geometry_msgs::Twist::ConstPtr& msg);
-  // //灯光消息回调函数
-  // void light_callback(const std_msgs::ColorRGBA::ConstPtr& light);
-  // void SetColor(float r, float g, float b, float a, uint8_t selet); //selet: 0X10  单色模式   0x20    呼吸模式
-  // //动态参数配置回调函数
-  // void dynamicReconfigCallback(xtark_robot::robotConfig &config, uint32_t level);
-
-  //ROS2
   //速度消息回调函数
   void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
   //灯光消息回调函数
   void lightCallback(const std::shared_ptr<const std_msgs::msg::ColorRGBA> & light);
   void setColor(
     float r, float g, float b, float a, uint8_t selet);  //selet: 0X10  单色模式   0x20    呼吸模式
-  //动态参数配置回调函数
-  // void dynamicReconfigCallback(xtark_robot::robotConfig &config, uint32_t level);
 
   //发布话题消息
   void publishOdom();    //发布里程计话题
@@ -187,13 +152,14 @@ private:
   boost::asio::io_service io_service_;
 
   //数据定义
-  struct ImuData imu_data_;                 //IMU数据
+  struct ImuData imu_data_;                //IMU数据
   struct ImuOrientationData orient_data_;  //IMU四元数姿态数据
-  struct VelocityData vel_data_;            //机器人的速度
-  struct PoseData pos_data_;                //机器人的位置
-  float bat_vol_data_;                       //机器人电池电压数据
+  struct VelocityData vel_data_;           //机器人的速度
+  struct PoseData pos_data_;               //机器人的位置
+  float bat_vol_data_;                     //机器人电池电压数据
 
   //AKM机器人专用，舵机偏置补偿角度，其它机器人忽略
+
   int akm_servo_offset_;
   //灯光参数
   int RGB_M1_;  //灯光模式
@@ -215,43 +181,20 @@ private:
   std::string cmd_vel_topic_;  //电池话题
 
   //消息定义
-  //ROS1
-  // nav_msgs::Odometry odom_msgs_;  //里程计发布消息
-  // sensor_msgs::Imu imu_msgs_;  //IMU发布消息
-  // std_msgs::Float32 bat_msgs_;  //电池电压发布消息
-
-  //ROS2
   nav_msgs::msg::Odometry odom_msgs_;  //里程计发布消息
   sensor_msgs::msg::Imu imu_msgs_;     //IMU发布消息
   std_msgs::msg::Float32 bat_msgs_;    //电池电压发布消息
 
   //发布器定义
-  //ROS1
-  // ros::Publisher odom_pub_;
-  // ros::Publisher bat_pub_;
-  // ros::Publisher imu_pub_;
-
-  //ROS2
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr bat_pub_;
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_pub_;
 
   //订阅器定义
-  //ROS1
-  // ros::Subscriber cmd_vel_sub_;
-  // ros::Subscriber light_sub_;
-
-  //ROS2
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
   rclcpp::Subscription<std_msgs::msg::ColorRGBA>::SharedPtr light_sub_;
 
   //TF变换定义
-  //ROS1
-  // bool pub_odom_tf_;
-  // geometry_msgs::TransformStamped transform_stamped_;
-  // tf2_ros::TransformBroadcaster transform_broadcaster_;
-
-  //ROS2
   bool pub_odom_tf_;
   geometry_msgs::msg::TransformStamped transform_stamped_;
   // 创建一个TransformBroadcaster对象
