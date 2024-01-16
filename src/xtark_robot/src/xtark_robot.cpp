@@ -120,9 +120,6 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options)
 
   // 创建底盘速度控制保护定时器（当没有接收到新速度消息时，串口发送给底盘的速度为0）
   timer_ = this->create_wall_timer(std::chrono::milliseconds(50), [this]() {
-    RCLCPP_INFO(
-      this->get_logger(), "(this->now() - this->last_msg_time_).seconds(): %lf",
-      (this->now() - this->last_msg_time_).seconds());
 
     if ((this->now() - this->last_msg_time_).seconds() > 0.2) {
       // 如果距离上次接收到消息超过0.5秒，那么将 cmd_vel 速度全部置0
