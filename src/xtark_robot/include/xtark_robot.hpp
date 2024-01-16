@@ -37,6 +37,7 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp/subscription_base.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/range.hpp>
 #include <std_msgs/msg/color_rgba.hpp>
@@ -199,6 +200,11 @@ private:
   geometry_msgs::msg::TransformStamped transform_stamped_;
   // 创建一个TransformBroadcaster对象
   tf2_ros::TransformBroadcaster tf_broadcaster_;
+
+  rclcpp::Time last_msg_time_;
+  rclcpp::TimerBase::SharedPtr timer_;
+
+  void checkCmdVelTimeout();
 };
 
 #endif

@@ -60,6 +60,7 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options)
 
   // 数据初始化
   memset(&pos_data_, 0, sizeof(pos_data_));
+  last_msg_time_ = this->now();
 
   // 提示信息，串口端口号和波特率
   RCLCPP_INFO(
@@ -116,6 +117,19 @@ XtarkRobot::XtarkRobot(const rclcpp::NodeOptions & options)
 
   // 机器人启动完成提示信息
   RCLCPP_INFO(this->get_logger(), "Xtark Robot initialization completed, is Running!");
+
+  // 创建底盘速度控制保护定时器（当没有接收到新速度消息时，串口发送给底盘的速度为0）
+  timer_ = this->create_wall_timer(std::chrono::milliseconds(50), [this]() {
+    RCLCPP_INFO(
+      this->get_logger(), "(this->now() - this->last_msg_time_).seconds(): %lf",
+      (this->now() - this->last_msg_time_).seconds());
+
+    if ((this->now() - this->last_msg_time_).seconds() > 0.2) {
+      // 如果距离上次接收到消息超过0.5秒，那么将 cmd_vel 速度全部置0
+      uint8_t stop_data[6] = {0};
+      this->sendSerialPacket(stop_data, 6, ID_ROS2CRP_VEL);
+    }
+  });
 }
 
 /*
@@ -133,6 +147,8 @@ XtarkRobot::~XtarkRobot()
   vel_data[4] = 0;
   vel_data[5] = 0;
   sendSerialPacket(vel_data, 6, ID_ROS2CRP_VEL);
+
+  timer_->cancel();
 
   //关闭串口
   closeSerialPort();
@@ -432,6 +448,8 @@ void XtarkRobot::publishOdomTF()
  */
 void XtarkRobot::cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg)
 {
+  last_msg_time_ = this->now();
+
   static uint8_t vel_data[11];
 
   //数据转换
